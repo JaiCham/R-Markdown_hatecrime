@@ -1,0 +1,60 @@
+---
+title: "Assignment 2"
+author: "Jai Chi Cham"
+date: "2022-09-05"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+#code chunk to call the installed packages
+library(dplyr)
+library(knitr)
+library (tidyr)
+```
+
+## Section 1: Description of the data
+
+The source of this dataset is from Southern Poverty Law Centerand FBI. The variables includes median household income, unemployed rate, population and etc . The hypothesis of this analysis is Higher rates of hate crimes are tied to income inequality. The research questions includes: 1. what is the key factor causing the hate crime. 2.Does the political ideology lead to hate crimes in a specific state? 3. What is the crime rate before and after the election, does it change?
+The file format is csv. It is a delimited file and it uses comma to separate the values. The databases are not fixed width since they are saved as CSV, and CSV files can’t have a fixed length of their columns.
+
+## Section 2 : Reading the data into R
+# https://github.com/fivethirtyeight/data/blob/master/hate-crimes/hate_crimes.csv
+```{r, include=TRUE}
+#using read.csv to read data from csv file from a URL
+hate_crimes <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/hate-crimes/hate_crimes.csv")
+```
+
+## Section 3 : clean the data
+```{r}
+#Remove gini_index since it is there is share_of_poverty, so it is more or less duplicate fields.
+subset1 = select(hate_crimes,-gini_index)
+
+#Sorts the states by Median household income
+sort_subset1 = arrange(subset1,median_household_income)
+hate_crimes  = sort_subset1
+```
+
+
+## Section 4 : Characteristics of data
+
+This dataframe has `r nrow(hate_crimes)` rows and `r ncol(hate_crimes)` columns. The names of the columns and a brief description of each are in the table below:
+
+```{r results = TRUE}
+#this makes a new data.frame called text_tbl with two columns, Names and Description
+library(knitr)
+columns_summary <- data.frame(
+Columns = c(colnames(hate_crimes)),
+Description = c("State","Median household income, 2016", "Share of the population that is unemployed (seasonally adjusted), Sept. 2016","Share of the population that lives in metropolitan areas, 2015","Share of the population that are not U.S. citizens, 2015","Share of white residents who are living in poverty, 2015","Gini Index, 2015","Share of the population that is not white, 2015","Share of 2016 U.S. presidential voters who voted for Donald Trump","Hate crimes per 100,000 population, Southern Poverty Law Center, Nov. 9-18, 2016","Average annual hate crimes per 100,000 population, FBI, 2010-2015")
+                        )
+kable(columns_summary, caption = "Columns Description")  
+```
+## Section 5 : Summary statistics
+```{r}
+hc_subset = select(hate_crimes,"median_household_income","share_unemployed_seasonal","share_population_in_metro_areas")
+```
+
+```{r, include = TRUE}
+subset_Summary <-summary(hc_subset) 
+subset_Summary 
+```
+
